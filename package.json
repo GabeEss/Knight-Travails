@@ -1,0 +1,29 @@
+{
+  "name": "knight-travails",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GabeEss/Knight-Travails.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GabeEss/Knight-Travails/issues"
+  },
+  "homepage": "https://github.com/GabeEss/Knight-Travails#readme",
+  "devDependencies": {
+    "css-loader": "^6.7.3",
+    "csv-loader": "^3.0.5",
+    "style-loader": "^3.3.2",
+    "webpack": "^5.76.3",
+    "webpack-cli": "^5.0.1",
+    "xml-loader": "^1.2.1"
+  }
+}
