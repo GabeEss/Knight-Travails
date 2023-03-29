@@ -1,8 +1,8 @@
 export default class Square {
     constructor(color, xcoordinate, ycoordinate) {
         this.color = color;
-        this.xcoordinate = xcoordinate;
-        this.ycoordinate = ycoordinate;
+        this.x = xcoordinate;
+        this.y = ycoordinate;
     }
 
     getColor() {
@@ -10,10 +10,10 @@ export default class Square {
     }
 
     getXCoordinate() {
-        return this.xcoordinate;
+        return this.x;
     }
 
     getYCoordinate() {
-        return this.ycoordinate;
+        return this.y;
     }
 }
