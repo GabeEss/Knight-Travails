@@ -1,0 +1,23 @@
+body {
+    margin: 0;
+    border: 0;
+}
+
+#main-container {
+    background-color: beige;
+    height: 100vh;
+    width: 100vw;
+}
+
+td {
+    height: 75px;
+    width: 75px;
+}
+
+.White {
+    background-color: white;
+}
+
+.Black {
+    background-color: black;
+}
