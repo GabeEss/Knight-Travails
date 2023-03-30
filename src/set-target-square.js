@@ -1,3 +1,3 @@
 export default function setSquare(gameboard) {
-    return gameboard[0, 0];
+    return gameboard[6][0];
 }
