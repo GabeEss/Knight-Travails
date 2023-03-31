@@ -44,7 +44,7 @@ export default function generateGrid(boardData) {
     for (let i = 0; i < 8; i++) {
         const letterCell = document.createElement("td");
         letterCell.classList.add('letter-cell');
-        letterCell.textContent = String.fromCharCode(97 + i);
+        letterCell.textContent = String.fromCharCode(65 + i);
         letterRow.appendChild(letterCell);
     }
     
