@@ -5,8 +5,8 @@ import setDefaultKnight from './set-default-knight';
 import setDefaultSquare from './set-default-square';
 import generateKnight from './generate-knight';
 import generateTarget from './generate-target';
-import findPath from './path-logic';
 import removeColor from './remove-path-color';
+import findPathWithPromise from './find-path-with-promise';
 
 
 const body = document.body; // body of the DOM
@@ -46,19 +46,16 @@ targetElement.setAttribute('draggable', true);
 knightElement.addEventListener("dragstart", onKnightDragStart);
 targetElement.addEventListener("dragstart", onTargetDragStart);
 
-// Remove the option to interact with anything until that is done.
-// Create a promise/await kind of thing before enabling that interaction.
-// In order to change the knight or target, allow the user to drag the knight or target.
 // Drag and drop should start an event that sets the knight/target's new position.
 // Might need to make it so you can't click on anything during this time, but maybe not
 // necessary.
 
 
-// While finding a patch from the knight to the target, the user cannot drag.
+// Click event for the "Find Path" button.
 findPathButton.addEventListener('click', async () => {
-    knightElement.removeEventListener("dragstart", onKnightDragStart); // prevent the user from dragging until function completes
+    knightElement.removeEventListener("dragstart", onKnightDragStart);
     targetElement.removeEventListener("dragstart", onTargetDragStart);
-    let string = await findPath(knight, target, gameboard);
+    let string = await findPathWithPromise(knight, target, gameboard);
     pathDisplay.textContent = string;
     enableDragStartListeners();
 })

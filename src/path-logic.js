@@ -8,17 +8,25 @@ export default function findPath(knight, target, gameboard) {
     const closestArray = []; // the array to hold the path to the target square
     findClosest(root, target, closestArray); // find the closest path to the target square
 
-    colorPath(closestArray);
+     // Wrap the colorPath function in a Promise
+    const colorPathPromise = new Promise((resolve) => {
+        resolve(colorPath(closestArray));
+    });
 
-    const chess = arrayToChess(closestArray);
-    let string = "";
-    
-    for(let i = chess.length - 1; i >= 0; i--) {
-        string += chess[i].position;
+    // When colorPath resolves, return the string to findPathWithPromise.
+    return colorPathPromise.then(() => {
         
-        if(i === 0);
-        else string += " to ";
-    }
-
-    return string;
-}
+        const chess = arrayToChess(closestArray);
+        let string = "";
+    
+        for (let i = chess.length - 1; i >= 0; i--) {
+          string += chess[i].position;
+    
+          if (i === 0);
+          else string += " to ";
+        }
+    
+        
+        return string;
+      });
+  }
