@@ -67,13 +67,11 @@ async function pathButtonClick() {
 
 function onKnightDragStart(event) {
     removeColor();
-    knightElement.classList.remove('knight');
     event.dataTransfer.setData("text/plain", "knight");
 }
 
 function onTargetDragStart(event) {
     removeColor();
-    targetElement.classList.remove('target');
     event.dataTransfer.setData("text/plain", "target");
 }
 
@@ -89,7 +87,6 @@ function enableDrag() {
 
 function onDragOver(event) {
     event.preventDefault();
-    const square = event.target.closest(".White, .Black"); // look for either class
 }
 
 // listen for dragover and drop events on board squares
@@ -98,25 +95,26 @@ gameboardElement.addEventListener("dragover", onDragOver);
 gameboardElement.addEventListener("drop", onDrop);
 gameboardElement.addEventListener("drop", onDrop);
 
-
-// NEED TO TEST AGAINST DROPPING ON THE SAME SQUARE!!!
-// listen for drop on board squares
 function onDrop(event) {
     event.preventDefault();
     const square = event.target.closest(".White, .Black"); // look for either class
     if (square) {
       const type = event.dataTransfer.getData("text/plain");
-      if (type === "knight") {
-        knightElement.setAttribute('draggable', false); // Remove draggable from old ele
-        knight = setNewKnight(square.id, gameboard);
-        knightElement = generateKnight(knight);
-        knightElement.setAttribute('draggable', true); // Make new elements draggable.
-      } else if (type === "target") {
+      // Test to see if dragging a knight/target and that the square
+      // being dropped on does not already hold the knight or target.
+      if (type === "knight" && square.id !== targetElement.id) {
+        knightElement.classList.remove('knight'); // Remove the knight class from the old element
+        knightElement.setAttribute('draggable', false); // Remove draggable from old element
+        knight = setNewKnight(square.id, gameboard); // Set the new knight on the gameboard.
+        knightElement = generateKnight(knight); // Get the new knight element in the DOM.
+        knightElement.setAttribute('draggable', true); // Make the new element draggable.
+      } else if (type === "target" && square.id !== knightElement.id) {
+        targetElement.classList.remove('target');
         targetElement.setAttribute('draggable', false);
         target = setNewTarget(square.id, gameboard);
         targetElement = generateTarget(target);
         targetElement.setAttribute('draggable', true);
       }
-      enableDrag();
+      enableDrag(); // restore any lost event listeners
     }
 }
