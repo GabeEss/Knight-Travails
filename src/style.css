@@ -39,12 +39,32 @@ td {
     transition: box-shadow 0.3s ease-out;
 }
 
+.knight::before {
+    content: "K";
+    font-size: 72px;
+  }
+
+.knight::before {
+    content: "♘";
+    font-size: 72px;
+  }
+
 .knight {
     display: flex;
     justify-content: center;
     align-items: center;
     color: gold;
 }
+
+.target::before {
+    content: "T";
+    font-size: 72px;
+  }
+
+.target::before {
+    content: "\1F3AF";
+    font-size: 48px;
+  }
 
 .target {
     display: flex;

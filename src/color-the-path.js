@@ -6,7 +6,6 @@ export default function colorPath(array) {
             let x = array[i].square.x.toString();
             let y = array[i].square.y.toString();
             let xy = x + y;
-            console.log(xy);
             let element = document.getElementById(xy);
             element.classList.add("Path")
         }, (count) * 1000)

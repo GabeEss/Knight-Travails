@@ -6,6 +6,7 @@ import setDefaultSquare from './set-default-square';
 import generateKnight from './generate-knight';
 import generateTarget from './generate-target';
 import findPath from './path-logic';
+import removeColor from './remove-path-color';
 
 
 const body = document.body; // body of the DOM
@@ -37,9 +38,14 @@ const knight = setDefaultKnight(gameboard); // get knight's square (the root nod
 const knightElement = generateKnight(knight); // put the knight on the board
 const target = setDefaultSquare(gameboard); // get the target square
 const targetElement = generateTarget(target); 
+knightElement.setAttribute('draggable', true); // Make the elements draggable.
+targetElement.setAttribute('draggable', true);
 
-// Highlight each element by attaching a class to it that colors it gold and remove the class
-// after the user attempts to drag the knight or target. 
+// Listen for a dragstart event to initiate the drag. The data is used to represent
+// whether the dragged element is the knight or the target.
+knightElement.addEventListener("dragstart", onKnightDragStart);
+targetElement.addEventListener("dragstart", onTargetDragStart);
+
 // Remove the option to interact with anything until that is done.
 // Create a promise/await kind of thing before enabling that interaction.
 // In order to change the knight or target, allow the user to drag the knight or target.
@@ -47,7 +53,28 @@ const targetElement = generateTarget(target);
 // Might need to make it so you can't click on anything during this time, but maybe not
 // necessary.
 
-findPathButton.addEventListener('click', () => {
-    let string = findPath(knight, target, gameboard);
+
+// While finding a patch from the knight to the target, the user cannot drag.
+findPathButton.addEventListener('click', async () => {
+    knightElement.removeEventListener("dragstart", onKnightDragStart); // prevent the user from dragging until function completes
+    targetElement.removeEventListener("dragstart", onTargetDragStart);
+    let string = await findPath(knight, target, gameboard);
     pathDisplay.textContent = string;
+    enableDragStartListeners();
 })
+
+function onKnightDragStart(event) {
+    removeColor();
+    event.dataTransfer.setData("text/plain", "knight");
+}
+
+function onTargetDragStart(event) {
+    removeColor();
+    event.dataTransfer.setData("text/plain", "target");
+}
+
+// Enables the drag events after they have been removed.
+function enableDragStartListeners() {
+    knightElement.addEventListener("dragstart", onKnightDragStart);
+    targetElement.addEventListener("dragstart", onTargetDragStart);
+}
