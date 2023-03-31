@@ -21,3 +21,17 @@ td {
 .Black {
     background-color: black;
 }
+
+.knight {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: gold;
+}
+
+.target {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: gold;
+}
