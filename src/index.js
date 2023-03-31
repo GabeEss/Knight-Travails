@@ -7,6 +7,8 @@ import generateKnight from './generate-knight';
 import generateTarget from './generate-target';
 import removeColor from './remove-path-color';
 import findPathWithPromise from './find-path-with-promise';
+import setNewKnight from './set-new-knight';
+import setNewTarget from './set-new-target';
 
 
 const body = document.body; // body of the DOM
@@ -34,10 +36,10 @@ main.appendChild(pathDisplay);
 
 body.appendChild(main);
 
-const knight = setDefaultKnight(gameboard); // get knight's square (the root node position)
-const knightElement = generateKnight(knight); // put the knight on the board
-const target = setDefaultSquare(gameboard); // get the target square
-const targetElement = generateTarget(target); 
+let knight = setDefaultKnight(gameboard); // get knight's square (the root node position)
+let knightElement = generateKnight(knight); // put the knight on the board
+let target = setDefaultSquare(gameboard); // get the target square
+let targetElement = generateTarget(target); 
 knightElement.setAttribute('draggable', true); // Make the elements draggable.
 targetElement.setAttribute('draggable', true);
 
@@ -46,32 +48,75 @@ targetElement.setAttribute('draggable', true);
 knightElement.addEventListener("dragstart", onKnightDragStart);
 targetElement.addEventListener("dragstart", onTargetDragStart);
 
-// Drag and drop should start an event that sets the knight/target's new position.
-// Might need to make it so you can't click on anything during this time, but maybe not
-// necessary.
-
-
 // Click event for the "Find Path" button.
-findPathButton.addEventListener('click', async () => {
+findPathButton.addEventListener('click', pathButtonClick);
+
+async function pathButtonClick() {
+    findPathButton.removeEventListener('click', pathButtonClick);
     knightElement.removeEventListener("dragstart", onKnightDragStart);
     targetElement.removeEventListener("dragstart", onTargetDragStart);
+    gameboardElement.removeEventListener("dragover", onDragOver);
+    gameboardElement.removeEventListener("dragover", onDragOver);
+    gameboardElement.removeEventListener("drop", onDrop);
+    gameboardElement.removeEventListener("drop", onDrop);
     let string = await findPathWithPromise(knight, target, gameboard);
     pathDisplay.textContent = string;
-    enableDragStartListeners();
-})
+    enableDrag();
+    findPathButton.addEventListener('click', pathButtonClick);
+}
 
 function onKnightDragStart(event) {
     removeColor();
+    knightElement.classList.remove('knight');
     event.dataTransfer.setData("text/plain", "knight");
 }
 
 function onTargetDragStart(event) {
     removeColor();
+    targetElement.classList.remove('target');
     event.dataTransfer.setData("text/plain", "target");
 }
 
 // Enables the drag events after they have been removed.
-function enableDragStartListeners() {
+function enableDrag() {
     knightElement.addEventListener("dragstart", onKnightDragStart);
     targetElement.addEventListener("dragstart", onTargetDragStart);
+    gameboardElement.addEventListener("dragover", onDragOver);
+    gameboardElement.addEventListener("dragover", onDragOver);
+    gameboardElement.addEventListener("drop", onDrop);
+    gameboardElement.addEventListener("drop", onDrop);
+}
+
+function onDragOver(event) {
+    event.preventDefault();
+    const square = event.target.closest(".White, .Black"); // look for either class
+}
+
+// listen for dragover and drop events on board squares
+gameboardElement.addEventListener("dragover", onDragOver);
+gameboardElement.addEventListener("dragover", onDragOver);
+gameboardElement.addEventListener("drop", onDrop);
+gameboardElement.addEventListener("drop", onDrop);
+
+
+// NEED TO TEST AGAINST DROPPING ON THE SAME SQUARE!!!
+// listen for drop on board squares
+function onDrop(event) {
+    event.preventDefault();
+    const square = event.target.closest(".White, .Black"); // look for either class
+    if (square) {
+      const type = event.dataTransfer.getData("text/plain");
+      if (type === "knight") {
+        knightElement.setAttribute('draggable', false); // Remove draggable from old ele
+        knight = setNewKnight(square.id, gameboard);
+        knightElement = generateKnight(knight);
+        knightElement.setAttribute('draggable', true); // Make new elements draggable.
+      } else if (type === "target") {
+        targetElement.setAttribute('draggable', false);
+        target = setNewTarget(square.id, gameboard);
+        targetElement = generateTarget(target);
+        targetElement.setAttribute('draggable', true);
+      }
+      enableDrag();
+    }
 }
