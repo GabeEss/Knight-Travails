@@ -21,26 +21,18 @@ export function defaultPosition(gameboard, gameboardElement, findPathButton, pat
     knightElement.setAttribute('draggable', true); // Make the elements draggable.
     targetElement.setAttribute('draggable', true);
 
-    // Listen for a dragstart event to initiate the drag. The data is used to represent
-    // whether the dragged element is the knight or the target.
-    knightElement.addEventListener("dragstart", (event) => onKnightDragStart(event));
-    targetElement.addEventListener("dragstart", (event) => onTargetDragStart(event));
+    enableDrag(gameboard, gameboardElement);
 
     // Click event for the "Find Path" button.
-    findPathButton.addEventListener('click', (event) => pathButtonClick
-    (findPathButton, gameboardElement, gameboard, pathDisplay));
-
-    // Listen for dragover and drop events on board squares.
-    gameboardElement.addEventListener("dragover", (event) => onDragOver(event));
-    gameboardElement.addEventListener("drop", (event) => onDrop
-    (event, gameboard, gameboardElement));
+    findPathButton.addEventListener('click', () => pathButtonClick
+    (findPathButton, gameboard, pathDisplay));
 }
 
 async function pathButtonClick
-(findPathButton, gameboardElement, gameboard, pathDisplay) {
-    findPathButton.removeEventListener('click', pathButtonClick);
+(findPathButton, gameboard, pathDisplay) {
     knightElement.setAttribute('draggable', false);
     targetElement.setAttribute('draggable', false);
+    findPathButton.style.pointerEvents = 'none';
 
     // Wait until the path is complete before allowing user to drag again.
     let string = await findPathWithPromise(knight, target, gameboard);
@@ -48,35 +40,32 @@ async function pathButtonClick
 
     knightElement.setAttribute('draggable', true);
     targetElement.setAttribute('draggable', true);
-    enableDrag(gameboard, gameboardElement);
-    findPathButton.addEventListener('click', (event) => pathButtonClick
-    (findPathButton, gameboardElement, gameboard, pathDisplay));
+    findPathButton.style.pointerEvents = 'auto';
 }
 
-function onKnightDragStart(event) {
-    removeColor();
-    event.dataTransfer.setData("text/plain", "knight");
-}
-
-function onTargetDragStart(event) {
-    removeColor();
-    event.dataTransfer.setData("text/plain", "target");
-}
-
-// Enables the drag events after they have been removed.
+// Enables the drag events.
 function enableDrag(gameboard, gameboardElement) {
-    knightElement.addEventListener("dragstart", (event) => onKnightDragStart(event));
-    targetElement.addEventListener("dragstart", (event) => onTargetDragStart(event));
+    gameboardElement.addEventListener("dragstart", (event) => onDragStart(event));
     gameboardElement.addEventListener("dragover", (event) => onDragOver(event));
     gameboardElement.addEventListener("drop", (event) => { 
-    onDrop (event, gameboard, gameboardElement)});
+    onDrop (event, gameboard)});
+}
+
+// Determine if dragging the knight or the target.
+function onDragStart(event) {
+    removeColor();
+    if(event.target.classList.contains('knight'))
+        event.dataTransfer.setData("text/plain", 'knight');
+    else
+        event.dataTransfer.setData("text/plain", 'target');
 }
 
 function onDragOver(event) {
     event.preventDefault();
 }
 
-function onDrop(event, gameboard, gameboardElement) {
+// What happens when the knight/target are dropped.
+function onDrop(event, gameboard) {
     event.preventDefault();
     const square = event.target.closest(".White, .Black"); // look for either class
     if (square) {
@@ -96,6 +85,5 @@ function onDrop(event, gameboard, gameboardElement) {
         targetElement = generateTarget(target);
         targetElement.setAttribute('draggable', true);
       }
-      enableDrag(gameboard, gameboardElement); // restore any lost event listeners
     }
 }
